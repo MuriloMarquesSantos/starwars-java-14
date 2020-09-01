@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.starwars.swapi.domain.Person;
+import com.starwars.swapi.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class PeopleService {
     public Person getPerson(String id) throws IOException, InterruptedException {
         var httpClient = HttpClient.newHttpClient();
         var request = buildHttpRequest(id);
-        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var response = sendHttpRequest(httpClient, request);
 
         return convertResponseIntoEntity(response);
     }
@@ -30,6 +31,16 @@ public class PeopleService {
                 .header("accept", "application/json")
                 .uri(URI.create("https://swapi.dev/api/people/"+id+"/"))
                 .build();
+    }
+
+    private HttpResponse<String> sendHttpRequest(HttpClient client, HttpRequest request) throws IOException, InterruptedException {
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new ResourceNotFoundException();
+        }
+
+        return response;
     }
 
     private Person convertResponseIntoEntity(HttpResponse<String> response) throws JsonProcessingException {
