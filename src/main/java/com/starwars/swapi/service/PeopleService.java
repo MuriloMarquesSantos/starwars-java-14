@@ -15,20 +15,20 @@ import java.net.http.HttpResponse;
 @Service
 public class PeopleService {
 
-    public Person getPerson() throws IOException, InterruptedException {
+    public Person getPerson(String id) throws IOException, InterruptedException {
         var httpClient = HttpClient.newHttpClient();
-        var request = buildHttpRequest();
+        var request = buildHttpRequest(id);
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         return convertResponseIntoEntity(response);
     }
 
-    private HttpRequest buildHttpRequest() {
+    private HttpRequest buildHttpRequest(String id) {
         return HttpRequest
                 .newBuilder()
                 .GET()
                 .header("accept", "application/json")
-                .uri(URI.create("https://swapi.dev/api/people/1/"))
+                .uri(URI.create("https://swapi.dev/api/people/"+id+"/"))
                 .build();
     }
 

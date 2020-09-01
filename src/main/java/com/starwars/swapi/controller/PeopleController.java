@@ -2,9 +2,8 @@ package com.starwars.swapi.controller;
 
 import com.starwars.swapi.domain.Person;
 import com.starwars.swapi.service.PeopleService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -18,8 +17,9 @@ public class PeopleController {
         this.peopleService = peopleService;
     }
 
-    @GetMapping()
-    public Person getPerson() throws IOException, InterruptedException {
-        return peopleService.getPerson();
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Person getPerson(@PathVariable String id) throws IOException, InterruptedException {
+        return peopleService.getPerson(id);
     }
 }
